@@ -5,8 +5,12 @@
 /.pnp
 .pnp.js
 
-#secret keys
+# environment variables
 .env
+.env.local
+.env.development
+.env.test
+.env.production
 
 # testing
 /coverage

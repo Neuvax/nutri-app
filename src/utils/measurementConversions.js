@@ -2,7 +2,8 @@ export const measurementConversions = {
     cucharada: 15,
     cucharadita: 5,
     taza: 240,
-    palma: 75,
+    pieza: 30,
+    palma: 80,
     puño: 60,
     chorrito: 10,
   };
