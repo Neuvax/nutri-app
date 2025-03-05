@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SelectorComida from '../components/SelectorComida';
 import VisualizadorDiario from '../components/VisualizadorDiario';
+import platoImg from '../assets/plato_buen_comer.jpg';
 
 const HomeScreen = () => {
   const [selectedFoods, setSelectedFoods] = useState([]);
@@ -203,8 +204,14 @@ const HomeScreen = () => {
           ?
         </button>
       </div>
+      <div style={styles.logoContainer}>
+        <img 
+          src={platoImg}
+          alt="Plato del buen comer" 
+          style={styles.platoImg} 
+        />
+      </div>
 
-      {/* Resto del contenido existente */}
       <div style={styles.topButtons}>
         <button onClick={() => setShowModal(true)} style={{ ...styles.button, marginRight: '10px' }}>
           Editar Mis Datos
@@ -430,6 +437,18 @@ const styles = {
   helpList: {
     margin: '10px 0',
     paddingLeft: '20px',
+  },
+  logoContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '25px',
+    width: '100%',
+  },
+  platoImg: {
+    maxWidth: '400px',
+    width: '100%',
+    height: 'auto',
+    borderRadius: '8px',
   },
 };
 
