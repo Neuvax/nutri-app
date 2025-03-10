@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SelectorComida from '../components/SelectorComida';
 import VisualizadorDiario from '../components/VisualizadorDiario';
-import platoImg from '../assets/plato_buen_comer.jpg';
+import platoImg from '../assets/plato_buen_comer.png';
 
 const HomeScreen = () => {
   const [selectedFoods, setSelectedFoods] = useState([]);
@@ -445,7 +445,7 @@ const styles = {
     width: '100%',
   },
   platoImg: {
-    maxWidth: '400px',
+    maxWidth: '350px',
     width: '100%',
     height: 'auto',
     borderRadius: '8px',

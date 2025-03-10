@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const DietPlanGenerator = ({ patientData }) => {
-  const [dietPlan, setDietPlan] = useState('');
+  const [recommendations, setRecommendations] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [dietaryRestrictions, setDietaryRestrictions] = useState('');
 
@@ -21,33 +21,30 @@ const DietPlanGenerator = ({ patientData }) => {
     td: { padding: '10px', borderTop: '1px solid #ecf0f1' }
   };
 
-  const generateDietPlan = async () => {
+  const generateRecommendations = async () => {
     setIsLoading(true);
     try {
-      const prompt = `No preguntes si tengo mas preguntas. Se firme con tus propuestas. Eres un nutriologo. Estas en consulta con un paciente y tienes que brindarle un plan de alimentacion en base a sus metas y necesidades. 
-      Crea un plan de alimentación personalizado para un paciente con las siguientes características:
-        - Edad: ${patientData.age} años
-        - Género: ${patientData.gender}
-        - Altura: ${patientData.height} cm
-        - Peso: ${patientData.weight} kg
-        - Nivel de actividad: ${patientData.activityLevel}
-        - Metas y restricciones alimenticias: ${dietaryRestrictions}
+      const prompt = `Eres un asistente especializado en nutrición que proporciona RECOMENDACIONES para que un nutriólogo profesional pueda crear un plan alimenticio adecuado. NO generes un plan alimenticio detallado, sino recomendaciones basadas en estos datos:
+      
+      Características del paciente:
+      - Edad: ${patientData.age} años
+      - Género: ${patientData.gender === 'male' ? 'Masculino' : 'Femenino'}
+      - Altura: ${patientData.height} cm
+      - Peso: ${patientData.weight} kg
+      - Nivel de actividad: ${patientData.activityLevel}
+      - Consideraciones adicionales: ${dietaryRestrictions}
 
-        El plan debe incluir:
-        1. Desayuno
-        2. Merienda de media mañana
-        3. Almuerzo
-        4. Merienda de media tarde
-        5. Cena
+      Proporciona:
+      1. Estimación de requerimiento calórico diario aproximado
+      2. Distribución recomendada de macronutrientes (proteínas, carbohidratos, grasas)
+      3. Consideraciones especiales basadas en la edad y condición del paciente
+      4. Recomendaciones generales sobre tipos de alimentos que podrían ser beneficiosos
+      5. Alimentos que se deben limitar o evitar según la información proporcionada
+      6. Sugerencias sobre frecuencia y tamaño de las comidas
 
-        Para cada comida, proporciona:
-        - Nombre del plato
-        - Ingredientes con cantidades específicas
-        - Calorías aproximadas
-
-        Asegúrate de que el plan sea equilibrado nutricionalmente, se ajuste a las necesidades calóricas del paciente y respete las metas y restricciones alimenticias especificadas. Incluye una variedad de alimentos de todos los grupos alimenticios permitidos.
-
-        Formatea la respuesta usando Markdown para una mejor presentación, incluyendo encabezados, listas y énfasis donde sea apropiado.`;
+      IMPORTANTE: Estas recomendaciones seran leidas por un nutriólogo profesional, por lo que no es necesario incluir detalles específicos sobre cantidades o recetas. Puedes usar tecnisismos.
+      
+      Formatea la respuesta usando Markdown para una mejor presentación, incluyendo encabezados, listas y énfasis donde sea apropiado.`;
 
       const response = await axios.post(
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
@@ -62,21 +59,24 @@ const DietPlanGenerator = ({ patientData }) => {
         }
       );
 
-      setDietPlan(response.data.candidates[0].content.parts[0].text);
+      setRecommendations(response.data.candidates[0].content.parts[0].text);
     } catch (error) {
-      console.error('Error al generar el plan de alimentación:', error);
-      setDietPlan('Error al generar el plan de alimentación. Por favor, intente de nuevo.');
+      console.error('Error al generar recomendaciones nutricionales:', error);
+      setRecommendations('Error al generar las recomendaciones. Por favor, intente de nuevo.');
     }
     setIsLoading(false);
   };
 
   return (
     <div>
-      <h2>Generador de Plan de Alimentación</h2>
+      <h2>Recomendaciones Nutricionales</h2>
+      <p style={{ color: '#555', marginBottom: '15px' }}>
+        Esta herramienta genera recomendaciones generales para que un profesional de la nutrición pueda crear un plan alimenticio personalizado.
+      </p>
       <textarea
         value={dietaryRestrictions}
         onChange={(e) => setDietaryRestrictions(e.target.value)}
-        placeholder="Ingrese metas y restricciones alimenticias (ej. vegetariano, alergia a nueces, objetivo de pérdida de peso)"
+        placeholder="Ingrese consideraciones adicionales (ej. alergias, condiciones médicas, preferencias alimentarias)"
         style={{
           width: '100%',
           minHeight: '100px',
@@ -87,7 +87,7 @@ const DietPlanGenerator = ({ patientData }) => {
         }}
       />
       <button 
-        onClick={generateDietPlan} 
+        onClick={generateRecommendations} 
         disabled={isLoading}
         style={{
           padding: '10px 20px',
@@ -99,11 +99,11 @@ const DietPlanGenerator = ({ patientData }) => {
           cursor: 'pointer'
         }}
       >
-        {isLoading ? 'Generando...' : 'Generar Plan de Alimentación'}
+        {isLoading ? 'Generando...' : 'Generar Recomendaciones'}
       </button>
-      {dietPlan && (
+      {recommendations && (
         <div style={{ marginTop: '20px' }}>
-          <h3>Plan de Alimentación Personalizado:</h3>
+          <h3>Recomendaciones Nutricionales:</h3>
           <ReactMarkdown 
             remarkPlugins={[remarkGfm]} 
             components={{
@@ -119,7 +119,7 @@ const DietPlanGenerator = ({ patientData }) => {
               td: ({node, ...props}) => <td style={markdownStyles.td} {...props} />
             }}
           >
-            {dietPlan}
+            {recommendations}
           </ReactMarkdown>
         </div>
       )}
